@@ -177,13 +177,22 @@ def bisons_move(iteration):
     bisons[:swarm_group_size] = bisons[sorting_indices[:swarm_group_size]]
     bisons_fitness[:swarm_group_size] = bisons_fitness[sorting_indices[:swarm_group_size]]
     update_convergence_curve()
-
+        
     # Check if runners found a promising solution and set appropriate center for next movement
     successful_runners -= 1
-    for better in range(swarm_group_size, population):
-        if sorting_indices[better] < swarm_group_size:
-            successful_runners = run_support
-            center = numpy.copy(bisons[better])
+    runners_found_promising_solution = False
+    best_runner_score = bisons_fitness[swarm_group_size - 1]
+    best_runner = numpy.copy(bisons[swarm_group_size - 1])
+    # Find the best runner and if it is better than the last swarmer, follow it
+    for runner in range(swarm_group_size, population):
+        if bisons_fitness[runner] < best_runner_score:
+            best_runner_score = bisons_fitness[runner]
+            best_runner = numpy.copy(bisons[runner])
+            runners_found_promising_solution = True
+    if runners_found_promising_solution:
+        print(iteration)
+        successful_runners = run_support
+        center = numpy.copy(best_runner)
     if successful_runners <= 0:
         center = compute_center()
 
